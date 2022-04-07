@@ -1,0 +1,16 @@
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+  "isbn": "3",
+  "title": "Java for beginners 3",
+  "author": "John Doe",
+  "pageNumber": "123",
+  "genres": ["FANTASY"]
+}
+
+###
+GET http://localhost:8080/books
+
+
+

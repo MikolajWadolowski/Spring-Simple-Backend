@@ -15,18 +15,16 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotBlank(message = "isbn is mandatory")
     @Column(unique = true, nullable = false)
-    private long isbn;
+    private Long isbn;
     @NotBlank(message = "title is mandatory")
     @Column(unique = true, nullable = false)
     private String title;
     @NotBlank(message = "author is mandatory")
     @Column(nullable = false)
     private String author;
-    @NotBlank(message = "pagenumber is mandatory")
     @Column(nullable = false)
-    private int pageNumber;
+    private Integer pageNumber;
     @Convert(converter = StringToEnumConverter.class)
     @Column
     private EnumSet<Genre> genres;
