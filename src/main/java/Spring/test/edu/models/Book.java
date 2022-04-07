@@ -1,35 +1,45 @@
 package Spring.test.edu.models;
 
+
+import Spring.test.edu.configs.StringToEnumConverter;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.EnumSet;
 
 
 @Entity
-@Table(name = "books")
+@Table(name = "book")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(unique = true,nullable = false)
+    @NotBlank(message = "isbn is mandatory")
+    @Column(unique = true, nullable = false)
     private long isbn;
-    @Column(unique = true,nullable = false)
+    @NotBlank(message = "title is mandatory")
+    @Column(unique = true, nullable = false)
     private String title;
+    @NotBlank(message = "author is mandatory")
     @Column(nullable = false)
     private String author;
+    @NotBlank(message = "pagenumber is mandatory")
     @Column(nullable = false)
     private int pageNumber;
+    @Convert(converter = StringToEnumConverter.class)
     @Column
     private EnumSet<Genre> genres;
     @Column
-    private Date rentalFromDate;
-    @Column
-    private Date rentalToDate;
+    private Date dateOfRelease;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
-    public Book(){
+    public Book() {
 
     }
-    public Book(long isbn, String title, String author, int pageNumber,EnumSet<Genre> genres){
+
+    public Book(long isbn, String title, String author, int pageNumber, EnumSet<Genre> genres) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
@@ -37,10 +47,22 @@ public class Book {
         this.genres = genres;
     }
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public long getIsbn() {
         return isbn;
     }
 
+    public void setIsbn(long isbn) {
+        this.isbn = isbn;
+    }
 
     public String getTitle() {
         return title;
@@ -74,36 +96,35 @@ public class Book {
         this.genres = genres;
     }
 
-    public void setIsbn(long isbn) {
-        this.isbn = isbn;
+    public Date getDateOfRelease() {
+        return dateOfRelease;
     }
 
-    public Date getRentalFromDate() {
-        return rentalFromDate;
+    public void setDateOfRelease(Date dateOfRelease) {
+        this.dateOfRelease = dateOfRelease;
     }
 
-    public void setRentalFromDate(Date rentalFromDate) {
-        this.rentalFromDate = rentalFromDate;
+    public User getUser() {
+        return user;
     }
 
-    public Date getRentalToDate() {
-        return rentalToDate;
-    }
-
-    public void setRentalToDate(Date rentalToDate) {
-        this.rentalToDate = rentalToDate;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "Book{" +
-                "isbn=" + isbn +
+                "id=" + id +
+                ", isbn=" + isbn +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", pageNumber=" + pageNumber +
                 ", genres=" + genres +
-                ", rentalFromDate=" + rentalFromDate +
-                ", rentalToDate=" + rentalToDate +
+                ", dateOfRelease=" + dateOfRelease +
+                ", user=" + user +
                 '}';
     }
+
+
 }
