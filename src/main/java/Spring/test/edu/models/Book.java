@@ -2,6 +2,7 @@ package Spring.test.edu.models;
 
 
 import Spring.test.edu.configs.StringToEnumConverter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -15,29 +16,33 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank(message = "isbn is mandatory")
     @Column(unique = true, nullable = false)
     private Long isbn;
     @NotBlank(message = "title is mandatory")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String title;
     @NotBlank(message = "author is mandatory")
     @Column(nullable = false)
     private String author;
+    @NotBlank(message = "Page number is mandatory")
     @Column(nullable = false)
     private Integer pageNumber;
     @Convert(converter = StringToEnumConverter.class)
     @Column
     private EnumSet<Genre> genres;
-    @Column
+    @NotBlank(message = "Date of release is mandatory")
+    @Column(nullable = false)
     private Date dateOfRelease;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"books", "handler", "hibernateLazyInitializer"}, allowSetters = true)
     private User user;
 
     public Book() {
 
     }
 
-    public Book(long isbn, String title, String author, int pageNumber, EnumSet<Genre> genres) {
+    public Book(Long isbn, String title, String author, Integer pageNumber, EnumSet<Genre> genres) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
@@ -54,11 +59,11 @@ public class Book {
         this.id = id;
     }
 
-    public long getIsbn() {
+    public Long getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(long isbn) {
+    public void setIsbn(Long isbn) {
         this.isbn = isbn;
     }
 
@@ -78,11 +83,11 @@ public class Book {
         this.author = author;
     }
 
-    public int getPageNumber() {
+    public Integer getPageNumber() {
         return pageNumber;
     }
 
-    public void setPageNumber(int pageNumber) {
+    public void setPageNumber(Integer pageNumber) {
         this.pageNumber = pageNumber;
     }
 

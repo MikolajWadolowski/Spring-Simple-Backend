@@ -1,5 +1,7 @@
 package Spring.test.edu.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
@@ -10,14 +12,15 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     @NotBlank(message = "Email is mandatory")
+    @Column(nullable = false)
     private String email;
     @NotBlank(message = "Username is mandatory")
+    @Column(nullable = false)
     private String username;
-    @NotBlank(message = "Password is mandatory")
-    private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"user", "handler", "hibernateLazyInitializer"}, allowSetters = true)
     private List<Book> books = new ArrayList<>();
 
 
@@ -25,13 +28,12 @@ public class User {
 
     }
 
-    public User(String email, String username, String password) {
+    public User(String email, String username) {
         this.email = email;
         this.username = username;
-        this.password = password;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -51,15 +53,7 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -69,5 +63,15 @@ public class User {
 
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", books=" + books +
+                '}';
     }
 }

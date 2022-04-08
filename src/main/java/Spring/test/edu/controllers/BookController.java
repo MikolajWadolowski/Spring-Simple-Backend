@@ -1,5 +1,6 @@
 package Spring.test.edu.controllers;
 
+import Spring.test.edu.dtos.RentBookDto;
 import Spring.test.edu.models.Book;
 import Spring.test.edu.services.BookService;
 import Spring.test.edu.services.UserService;
@@ -38,12 +39,36 @@ public class BookController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+    public ResponseEntity<?> createBook(@RequestBody Book book) {
         System.out.println(book);
         Book newBook = bookService.createBook(book);
         if (newBook != null) {
             return new ResponseEntity<>(newBook, HttpStatus.CREATED);
-        } else return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else return new ResponseEntity<>("Book failed to Create", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/return/{id}")
+    public ResponseEntity<?> returnBook(@PathVariable("id") long id) {
+        Book newBook = bookService.returnBook(id);
+        if (newBook == null) {
+            return new ResponseEntity<>("Book not Found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(newBook, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/rent")
+    public ResponseEntity<?> rentBook(@RequestBody RentBookDto dto) {
+        Book newBook = bookService.rentBook(dto);
+        if (newBook == null) {
+            return new ResponseEntity<>("Book not Found", HttpStatus.NOT_FOUND);
+        }
+        if (newBook.getUser() == null) {
+            return new ResponseEntity<>("User not Found", HttpStatus.NOT_FOUND);
+        }
+        if (newBook.getUser().getId() == dto.userId) {
+            return new ResponseEntity<>(newBook, HttpStatus.OK);
+        } else return new ResponseEntity<>("Book is already Rented", HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/{id}")

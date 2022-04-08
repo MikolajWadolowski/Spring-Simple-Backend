@@ -1,6 +1,8 @@
 package Spring.test.edu.services;
 
+import Spring.test.edu.dtos.RentBookDto;
 import Spring.test.edu.models.Book;
+import Spring.test.edu.models.User;
 import Spring.test.edu.repositories.BookRepository;
 import Spring.test.edu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,7 @@ public class BookService {
 
 
     public List<Book> getAllBooks() {
-        Optional<Book> book = bookRepository.findById(27l);
-        //  System.out.println(book.get().getGenres());
         return bookRepository.findAll();
-
     }
 
     public Book getBookById(long id) {
@@ -34,13 +33,40 @@ public class BookService {
 
     public Book createBook(Book book) {
         try {
-            System.out.println(book);
-            bookRepository.save(book);
-            return book;
+            return bookRepository.save(book);
         } catch (Exception e) {
-            System.out.println(e);
+            return null;
         }
-        return book;
+
+    }
+
+    public Book returnBook(long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            book.get().setUser(null);
+            bookRepository.save(book.get());
+            return book.get();
+        }
+        return null;
+    }
+
+    public Book rentBook(RentBookDto dto) {
+        Optional<Book> book = bookRepository.findById(dto.getBookId());
+        Optional<User> user = userRepository.findById(dto.getUserId());
+        if (!book.isPresent()) {
+            return null;
+        }
+        if (!user.isPresent()) {
+            book.get().setUser(null);
+            return book.get();
+        }
+        if (book.get().getUser() == null) {
+            book.get().setUser(user.get());
+            user.get().getBooks().add(book.get());
+            bookRepository.save(book.get());
+            //userRepository.save(user.get());
+            return book.get();
+        } else return book.get();
     }
 
     public Book updateBook(long id, Book book) {
@@ -52,6 +78,7 @@ public class BookService {
             if (book.getIsbn() != 0) bookEdit.setIsbn(book.getIsbn());
             if (book.getPageNumber() != 0) bookEdit.setPageNumber(book.getPageNumber());
             if (book.getGenres() != null) bookEdit.setGenres(book.getGenres());
+            if (book.getDateOfRelease() != null) bookEdit.setDateOfRelease(book.getDateOfRelease());
             return bookRepository.save(bookEdit);
         } else {
             return null;
