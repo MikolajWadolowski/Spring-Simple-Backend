@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
@@ -24,9 +25,6 @@ public class BookController {
     @GetMapping("")
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookService.getAllBooks();
-        if (books.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
@@ -40,37 +38,32 @@ public class BookController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createBook(@RequestBody Book book) {
-        System.out.println(book);
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
         Book newBook = bookService.createBook(book);
-        if (newBook != null) {
-            return new ResponseEntity<>(newBook, HttpStatus.CREATED);
-        } else return new ResponseEntity<>("Book failed to Create", HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping("/return/{id}")
-    public ResponseEntity<?> returnBook(@PathVariable("id") long id) {
-        Book newBook = bookService.returnBook(id);
-        if (newBook == null) {
-            return new ResponseEntity<>("Book not Found", HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(newBook, HttpStatus.OK);
     }
 
+    @PostMapping("/return/{id}")
+    public ResponseEntity<Book> returnBook(@PathVariable("id") long id) {
+        Book newBook = bookService.returnBook(id);
+        if (newBook == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return new ResponseEntity<>(newBook, HttpStatus.OK);
+    }
+    //TODO
     @PostMapping("/rent/{bookId}/{userId}")
-    public ResponseEntity<?> rentBook(@PathVariable Map<String,String> pathVarsMap) {
-        long bookId = Long.parseLong(pathVarsMap.get("bookId"));
-        long userId = Long.parseLong(pathVarsMap.get("userId"));
+    public ResponseEntity<Book> rentBook(@PathVariable("bookId") Long bookId, @PathVariable("userId") Long userId) {
         Book newBook = bookService.rentBook(bookId,userId);
         if (newBook == null) {
-            return new ResponseEntity<>("Book not Found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         if (newBook.getUser() == null) {
-            return new ResponseEntity<>("User not Found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(newBook, HttpStatus.NOT_FOUND);
         }
-        if (newBook.getUser().getId() == userId) {
+        if (Objects.equals(newBook.getUser().getId(), userId)) {
             return new ResponseEntity<>(newBook, HttpStatus.OK);
-        } else return new ResponseEntity<>("Book is already Rented", HttpStatus.BAD_REQUEST);
+        } else return new ResponseEntity<>(null, HttpStatus.CONFLICT);
     }
 
     @PutMapping("/{id}")

@@ -1,4 +1,4 @@
-package Spring.test.edu.configs;
+package Spring.test.edu.converters;
 
 import Spring.test.edu.models.Genre;
 import org.springframework.util.StringUtils;

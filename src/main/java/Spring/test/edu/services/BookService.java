@@ -41,11 +41,11 @@ public class BookService {
                 .map(book -> bookRepository.save(book))
                 .orElse(null);
     }
-
+    //TODO
     public Book rentBook(long bookId, long userId) {
-        Optional<Book> book = bookRepository.findById(bookId);
-        Optional<User> user = userRepository.findById(userId);
-        if (!book.isPresent()) {
+        Optional<Book> bookOpt = bookRepository.findById(bookId);
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (!bookOpt.isPresent()) {
             return null;
         }
         if (!user.isPresent()) {
@@ -57,7 +57,7 @@ public class BookService {
             user.get().getBooks().add(book.get());
             bookRepository.save(book.get());
         }
-        return book.get();
+        return book;
     }
 
     public Book updateBook(long id, Book book) {

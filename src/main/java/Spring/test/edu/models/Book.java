@@ -1,7 +1,7 @@
 package Spring.test.edu.models;
 
 
-import Spring.test.edu.configs.StringToEnumConverter;
+import Spring.test.edu.converters.StringToEnumConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -121,17 +121,21 @@ public class Book {
         return this;
     }
 
-    public Book bookCompare(Book book,Book bookEdit){
+    public Book rentBook(User user){
+        this.user = user;
+        user.getBooks().add(this);
+        return this;
+    }
 
 
-        if (book.getTitle() != null) bookEdit.title = book.title;
-        if (book.getAuthor() != null) bookEdit.author = book.author;
-        if (book.getIsbn() != null) bookEdit.isbn = book.isbn;
-        if (book.getPageNumber() != null) bookEdit.pageNumber = book.pageNumber;
-        if (book.getGenres() != null) bookEdit.genres = book.genres;
-        if (book.getDateOfRelease() != null) bookEdit.dateOfRelease = book.dateOfRelease;
-
-        return bookEdit;
+    public Book update(Book bookEdit){
+        if (bookEdit.getTitle() != null) title = bookEdit.title;
+        if (bookEdit.getAuthor() != null) author = bookEdit.author;
+        if (bookEdit.getIsbn() != null) isbn = bookEdit.isbn;
+        if (bookEdit.getPageNumber() != null) pageNumber = bookEdit.pageNumber;
+        if (bookEdit.getGenres() != null) genres = bookEdit.genres;
+        if (bookEdit.getDateOfRelease() != null) dateOfRelease = bookEdit.dateOfRelease;
+        return this;
     }
 
 
