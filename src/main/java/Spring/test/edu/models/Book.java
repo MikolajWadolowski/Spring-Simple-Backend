@@ -3,6 +3,7 @@ package Spring.test.edu.models;
 
 import Spring.test.edu.configs.StringToEnumConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,9 +15,15 @@ import java.util.EnumSet;
 @Table(name = "book")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(
+            strategy = GenerationType.AUTO,
+            generator = "native"
+    )
+    @GenericGenerator(
+            name = "native",
+            strategy = "native"
+    )
     private Long id;
-    @NotBlank(message = "isbn is mandatory")
     @Column(unique = true, nullable = false)
     private Long isbn;
     @NotBlank(message = "title is mandatory")
@@ -25,13 +32,11 @@ public class Book {
     @NotBlank(message = "author is mandatory")
     @Column(nullable = false)
     private String author;
-    @NotBlank(message = "Page number is mandatory")
     @Column(nullable = false)
     private Integer pageNumber;
     @Convert(converter = StringToEnumConverter.class)
     @Column
     private EnumSet<Genre> genres;
-    @NotBlank(message = "Date of release is mandatory")
     @Column(nullable = false)
     private Date dateOfRelease;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -111,9 +116,24 @@ public class Book {
         return user;
     }
 
-    public void setUser(User user) {
+    public Book setUser(User user) {
         this.user = user;
+        return this;
     }
+
+    public Book bookCompare(Book book,Book bookEdit){
+
+
+        if (book.getTitle() != null) bookEdit.title = book.title;
+        if (book.getAuthor() != null) bookEdit.author = book.author;
+        if (book.getIsbn() != null) bookEdit.isbn = book.isbn;
+        if (book.getPageNumber() != null) bookEdit.pageNumber = book.pageNumber;
+        if (book.getGenres() != null) bookEdit.genres = book.genres;
+        if (book.getDateOfRelease() != null) bookEdit.dateOfRelease = book.dateOfRelease;
+
+        return bookEdit;
+    }
+
 
     @Override
     public String toString() {

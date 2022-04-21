@@ -1,6 +1,5 @@
 package Spring.test.edu.services;
 
-import Spring.test.edu.dtos.RentBookDto;
 import Spring.test.edu.models.Book;
 import Spring.test.edu.models.User;
 import Spring.test.edu.repositories.BookRepository;
@@ -24,11 +23,8 @@ public class BookService {
     }
 
     public Book getBookById(long id) {
-
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            return book.get();
-        } else return null;
+        return bookRepository.findById(id)
+                .orElse(null);
     }
 
     public Book createBook(Book book) {
@@ -37,22 +33,18 @@ public class BookService {
         } catch (Exception e) {
             return null;
         }
-
     }
 
     public Book returnBook(long id) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            book.get().setUser(null);
-            bookRepository.save(book.get());
-            return book.get();
-        }
-        return null;
+        return bookRepository.findById(id)
+                .map(book -> book.setUser(null))
+                .map(book -> bookRepository.save(book))
+                .orElse(null);
     }
 
-    public Book rentBook(RentBookDto dto) {
-        Optional<Book> book = bookRepository.findById(dto.getBookId());
-        Optional<User> user = userRepository.findById(dto.getUserId());
+    public Book rentBook(long bookId, long userId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<User> user = userRepository.findById(userId);
         if (!book.isPresent()) {
             return null;
         }
@@ -64,34 +56,23 @@ public class BookService {
             book.get().setUser(user.get());
             user.get().getBooks().add(book.get());
             bookRepository.save(book.get());
-            //userRepository.save(user.get());
-            return book.get();
-        } else return book.get();
+        }
+        return book.get();
     }
 
     public Book updateBook(long id, Book book) {
         Optional<Book> bookData = bookRepository.findById(id);
         if (bookData.isPresent()) {
             Book bookEdit = bookData.get();
-            if (book.getTitle() != null) bookEdit.setTitle(book.getTitle());
-            if (book.getAuthor() != null) bookEdit.setAuthor(book.getAuthor());
-            if (book.getIsbn() != 0) bookEdit.setIsbn(book.getIsbn());
-            if (book.getPageNumber() != 0) bookEdit.setPageNumber(book.getPageNumber());
-            if (book.getGenres() != null) bookEdit.setGenres(book.getGenres());
-            if (book.getDateOfRelease() != null) bookEdit.setDateOfRelease(book.getDateOfRelease());
-            return bookRepository.save(bookEdit);
+            return bookRepository.save(bookEdit.bookCompare(book,bookEdit));
         } else {
             return null;
         }
     }
 
     public boolean deleteBook(long id) {
-        try {
-            bookRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        bookRepository.deleteById(id);
+        return true;
     }
 
 }

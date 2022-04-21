@@ -1,9 +1,9 @@
 package Spring.test.edu.dtos;
 
-public class RentBookDto {
+public class RentBookRequest {
 
-    public long bookId;
-    public long userId;
+    private long bookId;
+    private long userId;
 
     public long getBookId() {
         return bookId;
