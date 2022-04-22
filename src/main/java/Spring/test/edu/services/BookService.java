@@ -41,33 +41,26 @@ public class BookService {
                 .map(book -> bookRepository.save(book))
                 .orElse(null);
     }
-    //TODO
-    public Book rentBook(long bookId, long userId) {
-        Optional<Book> bookOpt = bookRepository.findById(bookId);
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (!bookOpt.isPresent()) {
-            return null;
-        }
-        if (!user.isPresent()) {
-            book.get().setUser(null);
-            return book.get();
-        }
-        if (book.get().getUser() == null) {
-            book.get().setUser(user.get());
-            user.get().getBooks().add(book.get());
-            bookRepository.save(book.get());
+
+    public RentBookResponse rentBook(long bookId, long userId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<User> user = userRepository.findById(userId);
+        if (!book.isPresent()) {
+            return RentBookResponse.buildFailure("Book not found");
+        } else if (!user.isPresent()) {
+            return RentBookResponse.buildFailure("User not found");
+        } else if (book.get().isRented()) {
+            return RentBookResponse.buildFailure("Book already rented");
+        } else {
+            return RentBookResponse.buildSuccess(bookRepository.save(book.get().rentBook(user.get())));
         }
         return book;
     }
 
-    public Book updateBook(long id, Book book) {
-        Optional<Book> bookData = bookRepository.findById(id);
-        if (bookData.isPresent()) {
-            Book bookEdit = bookData.get();
-            return bookRepository.save(bookEdit.bookCompare(book,bookEdit));
-        } else {
-            return null;
-        }
+    public Book updateBook(long id, Book bookEdit) {
+        return bookRepository.findById(id)
+                .map(book -> bookRepository.save(book.update(bookEdit)))
+                .orElse(null);
     }
 
     public boolean deleteBook(long id) {

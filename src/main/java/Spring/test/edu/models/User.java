@@ -1,6 +1,9 @@
 package Spring.test.edu.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -8,13 +11,17 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(
-            strategy= GenerationType.AUTO,
-            generator="native"
+            strategy = GenerationType.AUTO,
+            generator = "native"
     )
     @GenericGenerator(
             name = "native",
@@ -32,46 +39,11 @@ public class User {
     private List<Book> books = new ArrayList<>();
 
 
-    public User() {
-
-    }
-
     public User(String email, String username) {
         this.email = email;
         this.username = username;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String emailId) {
-        this.email = emailId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
 
     @Override
     public String toString() {

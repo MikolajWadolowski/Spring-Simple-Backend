@@ -1,6 +1,6 @@
 package Spring.test.edu.controllers;
 
-import Spring.test.edu.dtos.RentBookRequest;
+import Spring.test.edu.dtos.RentBookResponse;
 import Spring.test.edu.models.Book;
 import Spring.test.edu.services.BookService;
 import Spring.test.edu.services.UserService;
@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
@@ -34,13 +32,13 @@ public class BookController {
         if (book == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(book, HttpStatus.OK);
+        return ResponseEntity.ok(book);
     }
 
     @PostMapping("")
     public ResponseEntity<Book> createBook(@RequestBody Book book) {
         Book newBook = bookService.createBook(book);
-        return new ResponseEntity<>(newBook, HttpStatus.OK);
+        return ResponseEntity.ok(newBook);
     }
 
     @PostMapping("/return/{id}")
@@ -49,8 +47,9 @@ public class BookController {
         if (newBook == null) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(newBook, HttpStatus.OK);
+        return ResponseEntity.ok(newBook);
     }
+
     //TODO
     @PostMapping("/rent/{bookId}/{userId}")
     public ResponseEntity<Book> rentBook(@PathVariable("bookId") Long bookId, @PathVariable("userId") Long userId) {

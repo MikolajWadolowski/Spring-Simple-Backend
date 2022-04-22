@@ -17,11 +17,7 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        try {
-             return userRepository.save(user);
-        } catch (Exception e) {
-            return null;
-        }
+        return userRepository.save(user);
     }
 
 }
