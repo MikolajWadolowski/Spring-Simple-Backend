@@ -50,7 +50,6 @@ public class BookController {
         return ResponseEntity.ok(newBook);
     }
 
-    //TODO
     @PostMapping("/rent/{bookId}/{userId}")
     public ResponseEntity<Book> rentBook(@PathVariable("bookId") Long bookId, @PathVariable("userId") Long userId) {
         Book newBook = bookService.rentBook(bookId,userId);
